@@ -50,7 +50,9 @@ def add_user():
     cur = conn.cursor()
     cur.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
     conn.commit()
-    print("User added successfully.")
+    user_id = cur.lastrowid
+    print(f"User added successfully. User ID is {user_id}.")
+    conn.close()
 
 def search_users():
     keyword = input("Enter username keyword: ")
@@ -63,6 +65,7 @@ def search_users():
             print(f"ID: {user[0]} | Username: {user[1]}")
     else:
         print("No users found.")
+    conn.close()
 
 def add_book():
     title = input("Enter book title: ")
@@ -72,7 +75,9 @@ def add_book():
     cur = conn.cursor()
     cur.execute("INSERT INTO books (title, author, isbn) VALUES (%s, %s, %s)", (title, author, isbn))
     conn.commit()
-    print("Book added successfully.")
+    book_id = cur.lastrowid
+    print(f"Book added successfully. Book ID is {book_id}.")
+    conn.close()
 
 def modify_book():
     book_id = input("Enter book ID to modify: ")
@@ -84,6 +89,7 @@ def modify_book():
     cur.execute("UPDATE books SET title=%s, author=%s, isbn=%s WHERE id=%s", (title, author, isbn, book_id))
     conn.commit()
     print("Book updated successfully.")
+    conn.close()
 
 def issue_book():
     book_id = input("Enter book ID: ")
@@ -94,6 +100,7 @@ def issue_book():
                 (user_id, date.today(), book_id))
     conn.commit()
     print("Book issued successfully.")
+    conn.close()
 
 def return_book():
     book_id = input("Enter book ID: ")
@@ -102,6 +109,7 @@ def return_book():
     cur.execute("UPDATE books SET return_date=%s, issued_to=NULL WHERE id=%s", (date.today(), book_id))
     conn.commit()
     print("Book returned successfully.")
+    conn.close()
 
 def change_admin_credentials():
     current_user = input("Current username: ")
@@ -118,6 +126,7 @@ def change_admin_credentials():
         print("Admin credentials updated.")
     else:
         print("Invalid current credentials.")
+    conn.close()
 
 # User Functions
 def user_menu(user_id):
@@ -153,6 +162,7 @@ def view_books():
             print(f"ID: {book[0]} | {book[1]} by {book[2]}")
     else:
         print("No books available.")
+    conn.close()
 
 def view_issued(user_id):
     conn = get_connection()
@@ -164,6 +174,7 @@ def view_issued(user_id):
             print(f"{book[0]} by {book[1]} issued on {book[2]}")
     else:
         print("No books issued.")
+    conn.close()
 
 def add_note(user_id):
     title = input("Note title: ")
@@ -173,6 +184,7 @@ def add_note(user_id):
     cur.execute("INSERT INTO notes (user_id, title, content) VALUES (%s, %s, %s)", (user_id, title, content))
     conn.commit()
     print("Note added.")
+    conn.close()
 
 def view_notes(user_id):
     conn = get_connection()
@@ -184,6 +196,7 @@ def view_notes(user_id):
             print(f"{note[0]}: {note[1]}")
     else:
         print("No notes found.")
+    conn.close()
 
 # Main Menu
 def main_menu():
@@ -204,6 +217,7 @@ def main_menu():
                 admin_menu()
             else:
                 print("Invalid admin credentials.")
+            conn.close()
         elif choice == "2":
             username = input("User username: ")
             password = input("Password: ")
@@ -215,6 +229,7 @@ def main_menu():
                 user_menu(result[0])
             else:
                 print("Invalid user credentials.")
+            conn.close()
         elif choice == "3":
             print("Goodbye!")
             break
